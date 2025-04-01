@@ -1,0 +1,13 @@
+{
+    "name": "revolt-clone",
+    "version": "1.0.0",
+    "scripts": {
+      "start": "node server.js"
+    },
+    "dependencies": {
+      "socket.io": "^4.5.4"
+    },
+    "devDependencies": {
+      "@vercel/node": "^2.8.4"
+    }
+  }

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Revolt Clone</title>
+  <style>
+    body { font-family: Arial; margin: 0; padding: 20px; }
+    #chat { display: flex; height: 80vh; }
+    #sidebar { width: 200px; background: #2f3136; color: white; padding: 10px; }
+    #messages { flex: 1; padding: 10px; overflow-y: auto; background: #36393f; color: white; }
+    .message { margin-bottom: 10px; }
+    .user { color: #7289da; font-weight: bold; }
+    #form { display: flex; margin-top: 10px; }
+    #input { flex: 1; padding: 10px; }
+    button { padding: 10px; background: #7289da; color: white; border: none; }
+  </style>
+</head>
+<body>
+  <h1>Revolt Benzeri Sohbet</h1>
+  <div id="chat">
+    <div id="sidebar">
+      <h3>Odalar</h3>
+      <ul id="rooms"></ul>
+      <h3>Kullanıcılar</h3>
+      <ul id="users"></ul>
+    </div>
+    <div id="messages"></div>
+  </div>
+  <div id="form">
+    <input id="input" placeholder="Mesaj yaz..." />
+    <button id="send">Gönder</button>
+  </div>
+
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <script>
+    const socket = io();
+    const messages = document.getElementById('messages');
+    const input = document.getElementById('input');
+    const sendBtn = document.getElementById('send');
+    
+    // Odaya katıl
+    const username = prompt('Kullanıcı adınız:') || 'Anonim';
+    const room = 'genel';
+    socket.emit('join', { username, room });
+    
+    // Mesaj gönder
+    function sendMessage() {
+      if (input.value) {
+        socket.emit('sendMessage', {
+          message: input.value,
+          room: room
+        });
+        input.value = '';
+      }
+    }
+    
+    sendBtn.addEventListener('click', sendMessage);
+    input.addEventListener('keypress', e => {
+      if (e.key === 'Enter') sendMessage();
+    });
+    
+    // Mesajları dinle
+    socket.on('message', msg => {
+      const item = document.createElement('div');
+      item.className = 'message';
+      item.innerHTML = `<span class="user">${msg.user}</span>: ${msg.text}`;
+      messages.appendChild(item);
+      messages.scrollTop = messages.scrollHeight;
+    });
+  </script>
+</body>
+</html>
